@@ -30,6 +30,18 @@ fun LatidoApp() {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = backStackEntry?.destination
 
+    // Single, consistent way to switch top-level tabs. Used by the bottom bar AND by the
+    // "Analyze my car" button, so the selected state and back stack never get out of sync.
+    fun selectTab(route: String) {
+        navController.navigate(route) {
+            popUpTo(navController.graph.findStartDestination().id) {
+                saveState = true
+            }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
+
     Scaffold(
         bottomBar = {
             NavigationBar {
@@ -37,15 +49,7 @@ fun LatidoApp() {
                     val selected = currentDestination?.hierarchy?.any { it.route == dest.route } == true
                     NavigationBarItem(
                         selected = selected,
-                        onClick = {
-                            navController.navigate(dest.route) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        },
+                        onClick = { selectTab(dest.route) },
                         icon = {
                             Icon(dest.icon, contentDescription = stringResource(dest.labelRes))
                         },
@@ -63,7 +67,7 @@ fun LatidoApp() {
             composable(Destination.HOME.route) {
                 HomeScreen(
                     viewModel = carViewModel,
-                    onAnalyzed = { navController.navigate(Destination.DIAGNOSIS.route) }
+                    onAnalyzed = { selectTab(Destination.DIAGNOSIS.route) }
                 )
             }
             composable(Destination.DIAGNOSIS.route) {

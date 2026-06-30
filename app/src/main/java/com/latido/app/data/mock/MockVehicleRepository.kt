@@ -16,8 +16,6 @@ class MockVehicleRepository @Inject constructor() : VehicleRepository {
 
     override val isDemo: Boolean = true
 
-    private var cleared = false
-
     override suspend fun read(): ObdReading {
         delay(900)
         val vehicle = VehicleContext(
@@ -31,21 +29,18 @@ class MockVehicleRepository @Inject constructor() : VehicleRepository {
                 "speed_kmh" to "0"
             )
         )
-        return if (cleared) {
-            ObdReading(vehicle = vehicle)
-        } else {
-            ObdReading(
-                vehicle = vehicle,
-                // Mixed severities so the colour coding is visible: green + amber + red.
-                storedCodes = listOf("P0300", "P0455", "P0335"),
-                pendingCodes = listOf("P0171")
-            )
-        }
+        return ObdReading(
+            vehicle = vehicle,
+            // Mixed severities so the colour coding is visible: green + amber + red.
+            storedCodes = listOf("P0300", "P0455", "P0335"),
+            pendingCodes = listOf("P0171")
+        )
     }
 
     override suspend fun clearCodes(): Boolean {
+        // Simulates a successful Mode 04 clear. The demo car re-reports its faults on the next
+        // read so the read -> clear -> re-analyze cycle can be tested repeatedly.
         delay(700)
-        cleared = true
         return true
     }
 }
