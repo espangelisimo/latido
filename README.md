@@ -5,11 +5,26 @@ plain-language diagnosis for people who know nothing about mechanics.
 
 Built in phases (see `promptAppOBD_mejorado.md`), compiling after each one.
 
-## Status — Phase 1 (architecture, minimalist UI, mock data)
+## Status — Phase 2A (OBD protocol brain, on the replay transport)
 
-No hardware or network yet. The whole UI is built against the real data contract
-(`DiagnosisResult`) using mock providers, so later phases swap implementations without
-touching the UI.
+The app now reads the car through the **real ELM327 pipeline** instead of canned objects:
+`Elm327Client` runs the AT init sequence and the OBD reads, `ObdResponseParser` cleans the
+messy adapter output (echo, `SEARCHING...`, `NO DATA`, optional spaces/headers, ISO-TP
+multi-frame), and `DtcDecoder` / `VinDecoder` turn bytes into codes and vehicle identity.
+
+Because the Android emulator has no OBD Bluetooth, the transport behind the client is a
+`ReplayObdTransport` that returns byte-accurate ELM327 responses for a simulated car
+(VIN VF1RFB000G1234567 → Renault 2016; stored P0300/P0455/P0335, pending P0171). So the whole
+decoding pipeline runs on the emulator and under unit tests. Phase 2B swaps that transport for
+the real Bluetooth Classic (SPP) and BLE (UART) implementations.
+
+Unit tests (`./gradlew :app:testDebugUnitTest`): `DtcDecoderTest`, `ObdResponseParserTest`
+(incl. dirty/CAN-header/multi-frame fixtures), `VinDecoderTest`, `DiagnosisContractTest`.
+
+### Phase 1 recap (still in place)
+
+The whole UI is built against the real data contract (`DiagnosisResult`); later phases swap
+implementations without touching the UI.
 
 What's in:
 
@@ -52,7 +67,8 @@ into `BuildConfig.PROXY_URL`. Not used in Phase 1 (mocks), wired for Phase 3.
 
 ## Not yet (by design)
 
-- Bluetooth / real OBD reads (Phase 2)
+- Real Bluetooth transports: Classic SPP + BLE UART, scanning, ELM327 autodetection, runtime
+  permissions (Phase 2B)
 - Real LLM diagnosis via the Cloudflare proxy (Phase 3)
 - Room persistence, share/report, clear-history (Phase 4)
 - Inspection readiness monitors, backup, legal (Phase 5)
