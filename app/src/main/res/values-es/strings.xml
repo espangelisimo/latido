@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- nav -->
+    <string name="nav_home">Inicio</string>
+    <string name="nav_diagnosis">Diagnóstico</string>
+    <string name="nav_history">Historial</string>
+
+    <!-- Home -->
+    <string name="home_title">Latido</string>
+    <string name="home_connection_connected">Adaptador conectado</string>
+    <string name="home_connection_disconnected">Sin adaptador conectado</string>
+    <string name="home_connection_demo">Modo demo — datos de ejemplo</string>
+    <string name="home_analyze_button">Analizar mi coche</string>
+    <string name="home_health_summary_title">Salud del vehículo</string>
+    <string name="home_health_all_good">No se han encontrado fallos</string>
+    <string name="home_health_faults_found">%1$d código(s) de fallo detectado(s)</string>
+    <string name="home_clear_codes_button">Borrar fallos</string>
+
+    <!-- Vehicle header -->
+    <string name="vehicle_header_vin">VIN %1$s</string>
+    <string name="vehicle_header_unknown">Vehículo desconocido</string>
+
+    <!-- Codes -->
+    <string name="codes_title">Códigos de avería</string>
+    <string name="codes_empty">No hay códigos almacenados. Tu coche se ve limpio.</string>
+    <string name="codes_unknown_name">Código genérico — usa el diagnóstico con IA para más detalle</string>
+    <string name="codes_stored_label">Almacenado</string>
+    <string name="codes_pending_label">Pendiente</string>
+    <string name="codes_safety_critical">No conduzcas — acude a un profesional</string>
+
+    <!-- Severity -->
+    <string name="severity_green">Leve</string>
+    <string name="severity_amber">Precaución</string>
+    <string name="severity_red">Crítico</string>
+    <string name="severity_unknown">Gravedad desconocida</string>
+
+    <!-- Verdict -->
+    <string name="verdict_title">Diagnóstico</string>
+    <string name="verdict_state_ok">Todo parece correcto</string>
+    <string name="verdict_state_caution">Conduce con precaución</string>
+    <string name="verdict_state_critical">No conduzcas</string>
+    <string name="verdict_can_drive_yes">Puedes seguir conduciendo</string>
+    <string name="verdict_can_drive_caution">Puedes seguir conduciendo, con cuidado</string>
+    <string name="verdict_can_drive_no">No conduzcas el coche</string>
+    <string name="verdict_confidence">Confianza: %1$s</string>
+    <string name="verdict_locked_title">Diagnóstico con IA</string>
+    <string name="verdict_locked_body">Descubre qué pasa, si puedes conducir, el coste aproximado y un informe para tu taller.</string>
+    <string name="verdict_locked_cta">Hacer diagnóstico con IA</string>
+
+    <!-- Faults -->
+    <string name="faults_title">Averías probables</string>
+    <string name="probability_label">Probabilidad: %1$s</string>
+    <string name="probability_high">alta</string>
+    <string name="probability_medium">media</string>
+    <string name="probability_low">baja</string>
+    <string name="confidence_high">alta</string>
+    <string name="confidence_medium">media</string>
+    <string name="confidence_low">baja</string>
+
+    <!-- Answers -->
+    <string name="answers_title">Tus preguntas</string>
+    <string name="answer_can_drive">¿Puedo seguir conduciendo?</string>
+    <string name="answer_fuel">¿Consumirá más combustible?</string>
+    <string name="answer_damage">¿Puede dañar otras piezas?</string>
+
+    <!-- Cost -->
+    <string name="cost_title">Coste estimado</string>
+    <string name="cost_range">%1$d–%2$d €</string>
+    <string name="cost_note_default">Orientativo, taller medio.</string>
+
+    <!-- Mechanic -->
+    <string name="mechanic_title">Para el mecánico</string>
+    <string name="mechanic_share">Compartir</string>
+
+    <!-- Inspection: in Spain it is the ITV. -->
+    <string name="inspection_title">¿Pasará la ITV?</string>
+    <string name="inspection_label">ITV</string>
+    <string name="inspection_pass">Probablemente la pase</string>
+    <string name="inspection_warn">Puede que no pase — revisa la luz del motor y los monitores</string>
+    <string name="inspection_fail">Probablemente no la pase ahora</string>
+
+    <!-- History -->
+    <string name="history_title">Historial</string>
+    <string name="history_empty">Aún no hay diagnósticos. Analiza tu coche para ver resultados aquí.</string>
+    <string name="history_status_active">Activo</string>
+    <string name="history_status_cleared">Borrado del coche</string>
+
+    <!-- Generic / errors -->
+    <string name="error_no_connection">Necesitas conexión para el diagnóstico con IA.</string>
+    <string name="action_retry">Reintentar</string>
+    <string name="action_back">Atrás</string>
+
+    <!-- Language -->
+    <string name="settings_language">Idioma</string>
+    <string name="settings_language_system">Idioma del sistema</string>
+</resources>

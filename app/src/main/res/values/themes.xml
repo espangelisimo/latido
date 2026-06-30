@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Window theme used while Compose draws the real UI. Descends from a Material3
+         (AppCompat-compatible) theme so MainActivity can be an AppCompatActivity, which
+         is what enables per-app language switching via AppCompatDelegate. -->
+    <style name="Theme.Latido" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="o_mr1">shortEdges</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+</resources>

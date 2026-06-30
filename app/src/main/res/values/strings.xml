@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand name: never translated. -->
+    <string name="app_name" translatable="false">Latido</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_diagnosis">Diagnosis</string>
+    <string name="nav_history">History</string>
+
+    <!-- Home screen -->
+    <string name="home_title">Latido</string>
+    <string name="home_connection_connected">Adapter connected</string>
+    <string name="home_connection_disconnected">No adapter connected</string>
+    <string name="home_connection_demo">Demo mode — using sample data</string>
+    <string name="home_analyze_button">Analyze my car</string>
+    <string name="home_health_summary_title">Vehicle health</string>
+    <string name="home_health_all_good">No faults found</string>
+    <string name="home_health_faults_found">%1$d fault code(s) detected</string>
+    <string name="home_clear_codes_button">Clear faults</string>
+
+    <!-- Vehicle header -->
+    <string name="vehicle_header_vin">VIN %1$s</string>
+    <string name="vehicle_header_unknown">Unknown vehicle</string>
+
+    <!-- Free basic view: fault code list -->
+    <string name="codes_title">Fault codes</string>
+    <string name="codes_empty">No fault codes stored. Your car looks clean.</string>
+    <string name="codes_unknown_name">Generic code — use AI diagnosis for more detail</string>
+    <string name="codes_stored_label">Stored</string>
+    <string name="codes_pending_label">Pending</string>
+    <string name="codes_safety_critical">Do not drive — have it checked by a professional</string>
+
+    <!-- Severity labels (content descriptions) -->
+    <string name="severity_green">Minor</string>
+    <string name="severity_amber">Caution</string>
+    <string name="severity_red">Critical</string>
+    <string name="severity_unknown">Unknown severity</string>
+
+    <!-- AI verdict block -->
+    <string name="verdict_title">Diagnosis</string>
+    <string name="verdict_state_ok">Everything looks fine</string>
+    <string name="verdict_state_caution">Drive with caution</string>
+    <string name="verdict_state_critical">Do not drive</string>
+    <string name="verdict_can_drive_yes">You can keep driving</string>
+    <string name="verdict_can_drive_caution">You can keep driving, carefully</string>
+    <string name="verdict_can_drive_no">Do not drive the car</string>
+    <string name="verdict_confidence">Confidence: %1$s</string>
+    <string name="verdict_locked_title">AI diagnosis</string>
+    <string name="verdict_locked_body">Get a clear explanation of what is wrong, whether you can drive, the likely cost and a report for your mechanic.</string>
+    <string name="verdict_locked_cta">Run AI diagnosis</string>
+
+    <!-- Probable faults (Pro) -->
+    <string name="faults_title">Likely problems</string>
+    <string name="probability_label">Probability: %1$s</string>
+    <string name="probability_high">high</string>
+    <string name="probability_medium">medium</string>
+    <string name="probability_low">low</string>
+    <string name="confidence_high">high</string>
+    <string name="confidence_medium">medium</string>
+    <string name="confidence_low">low</string>
+
+    <!-- Three key answers -->
+    <string name="answers_title">Your questions</string>
+    <string name="answer_can_drive">Can I keep driving?</string>
+    <string name="answer_fuel">Will it use more fuel?</string>
+    <string name="answer_damage">Can it damage other parts?</string>
+
+    <!-- Estimated cost -->
+    <string name="cost_title">Estimated cost</string>
+    <string name="cost_range">%1$d–%2$d €</string>
+    <string name="cost_note_default">Rough estimate, average workshop.</string>
+
+    <!-- Mechanic card -->
+    <string name="mechanic_title">For your mechanic</string>
+    <string name="mechanic_share">Share</string>
+
+    <!-- Inspection (ITV/MOT/TÜV…) card. Label is localized per country. -->
+    <string name="inspection_title">Will it pass the inspection?</string>
+    <string name="inspection_label">MOT</string>
+    <string name="inspection_pass">Likely to pass</string>
+    <string name="inspection_warn">May not pass — check the engine light and monitors</string>
+    <string name="inspection_fail">Unlikely to pass right now</string>
+
+    <!-- History screen -->
+    <string name="history_title">History</string>
+    <string name="history_empty">No diagnostics yet. Analyze your car to see results here.</string>
+    <string name="history_status_active">Active</string>
+    <string name="history_status_cleared">Cleared from car</string>
+
+    <!-- Generic / errors -->
+    <string name="error_no_connection">You need a connection for the AI diagnosis.</string>
+    <string name="action_retry">Retry</string>
+    <string name="action_back">Back</string>
+
+    <!-- Language selector -->
+    <string name="settings_language">Language</string>
+    <string name="settings_language_system">System default</string>
+</resources>
