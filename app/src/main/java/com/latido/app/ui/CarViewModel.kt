@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.latido.app.data.dtc.DtcDictionary
 import com.latido.app.domain.DiagnosisProvider
 import com.latido.app.domain.VehicleRepository
+import com.latido.app.domain.model.Dtc
 import com.latido.app.domain.model.DtcStatus
 import com.latido.app.domain.model.VehicleContext
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -48,7 +49,7 @@ class CarViewModel @Inject constructor(
                             inspection = mockInspection(stored.isNotEmpty() || pending.isNotEmpty())
                         )
                     }
-                    recordHistory(reading.vehicle, stored.size + pending.size)
+                    recordHistory(reading.vehicle, stored + pending)
                 }
                 .onFailure {
                     _uiState.update { it.copy(readState = ReadState.Error) }
@@ -99,14 +100,15 @@ class CarViewModel @Inject constructor(
         }
     }
 
-    private fun recordHistory(vehicle: VehicleContext, codeCount: Int) {
+    private fun recordHistory(vehicle: VehicleContext, codes: List<Dtc>) {
         val now = System.currentTimeMillis()
         val item = HistoryItem(
             id = now,
             title = listOfNotNull(vehicle.make, vehicle.model).joinToString(" ").ifBlank { "Vehicle" },
-            subtitle = "$codeCount code(s)",
+            subtitle = "${codes.size} code(s)",
             vin = vehicle.vin,
-            timestampMillis = now
+            timestampMillis = now,
+            codes = codes
         )
         _history.update { listOf(item) + it }
     }

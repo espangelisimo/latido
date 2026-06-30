@@ -36,7 +36,8 @@ class MockVehicleRepository @Inject constructor() : VehicleRepository {
         } else {
             ObdReading(
                 vehicle = vehicle,
-                storedCodes = listOf("P0300", "P0420"),
+                // Mixed severities so the colour coding is visible: green + amber + red.
+                storedCodes = listOf("P0300", "P0455", "P0335"),
                 pendingCodes = listOf("P0171")
             )
         }
