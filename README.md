@@ -5,6 +5,26 @@ plain-language diagnosis for people who know nothing about mechanics.
 
 Built in phases (see `promptAppOBD_mejorado.md`), compiling after each one.
 
+## Status — Phase 2B (real Bluetooth transports)
+
+Adds the real Bluetooth layer under the OBD brain from 2A, with auto-detection of adapter type:
+
+- **Permissions:** runtime `BLUETOOTH_SCAN` / `BLUETOOTH_CONNECT` on Android 12+, fine-location
+  fallback for BLE scanning on Android 11-, handled in the UI with friendly messages.
+- **Scanning + autodetection (`Elm327Scanner`):** finds an ELM327 by name, preferring an already
+  paired Classic device, then a short BLE scan; tags it CLASSIC or BLE.
+- **Transports:** `ClassicBluetoothTransport` (RFCOMM/SPP, UUID 00001101-…, with the reflection
+  fallback for clones) and `BleBluetoothTransport` (GATT/UART: connect, discover, enable
+  notifications; prefers Nordic UART / FFF0 / FFE0, falls back to any writable+notifiable char).
+- **`ObdConnectionManager`:** picks demo vs Bluetooth from the selected mode, builds the right
+  transport, connects, and hands back a ready `Elm327Client`; reused across reads.
+- **UI:** a Demo / Bluetooth toggle on Home (defaults to Demo so the emulator still works),
+  connection progress microcopy (scanning / connecting / reading), and typed error states
+  (no adapter, Bluetooth off, permission, connection failed, timeout).
+
+Real Bluetooth can only be validated on a physical phone with a real ELM327 dongle + car. The
+demo replay path is unchanged and still runs on the emulator.
+
 ## Status — Phase 2A (OBD protocol brain, on the replay transport)
 
 The app now reads the car through the **real ELM327 pipeline** instead of canned objects:

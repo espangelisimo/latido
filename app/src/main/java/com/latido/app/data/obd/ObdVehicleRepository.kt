@@ -7,19 +7,21 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Reads the car through the real ELM327 pipeline. In Phase 2A the underlying transport is the
- * replay (so it runs on the emulator); in Phase 2B the same code reads over Bluetooth. Marked as
- * demo while the transport is the replay.
+ * Reads the car through the real ELM327 pipeline. The [ObdConnectionManager] decides whether the
+ * transport underneath is the replay (demo) or a real Bluetooth adapter; this class is identical
+ * either way.
  */
 @Singleton
 class ObdVehicleRepository @Inject constructor(
-    private val client: Elm327Client
+    private val connectionManager: ObdConnectionManager,
+    private val modeStore: ConnectionModeStore
 ) : VehicleRepository {
 
-    override val isDemo: Boolean = true // Replay transport. Becomes false with real Bluetooth.
+    override val isDemo: Boolean
+        get() = modeStore.mode.value == ConnectionMode.DEMO
 
     override suspend fun read(): ObdReading {
-        client.connectAndInit()
+        val client = connectionManager.acquireClient()
         val stored = client.readStoredDtcs()
         val pending = client.readPendingDtcs()
         val vin = client.readVin()
@@ -39,7 +41,7 @@ class ObdVehicleRepository @Inject constructor(
     }
 
     override suspend fun clearCodes(): Boolean {
-        client.connectAndInit()
+        val client = connectionManager.acquireClient()
         return client.clearDtcs()
     }
 }

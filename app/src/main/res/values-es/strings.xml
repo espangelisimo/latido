@@ -85,8 +85,23 @@
     <string name="history_status_active">Activo</string>
     <string name="history_status_cleared">Borrado del coche</string>
 
+    <!-- Connection mode -->
+    <string name="home_mode_demo">Demo</string>
+    <string name="home_mode_bluetooth">Bluetooth</string>
+
+    <!-- Connection progress -->
+    <string name="status_scanning">Buscando tu adaptador…</string>
+    <string name="status_connecting">Conectando…</string>
+    <string name="status_reading">Leyendo tu coche…</string>
+
     <!-- Generic / errors -->
     <string name="error_no_connection">Necesitas conexión para el diagnóstico con IA.</string>
+    <string name="error_no_adapter">No se encuentra el adaptador. ¿Está enchufado, con el contacto puesto y emparejado en los ajustes de Bluetooth?</string>
+    <string name="error_bluetooth_off">El Bluetooth está apagado. Enciéndelo e inténtalo de nuevo.</string>
+    <string name="error_permission">Latido necesita permiso de Bluetooth para hablar con tu adaptador.</string>
+    <string name="error_connection_failed">No se pudo conectar con el adaptador. Inténtalo de nuevo o desenchúfalo y vuelve a enchufarlo.</string>
+    <string name="error_timeout">El adaptador dejó de responder. Asegúrate de tener el contacto puesto e inténtalo de nuevo.</string>
+    <string name="error_generic">Algo salió mal al leer tu coche. Inténtalo de nuevo.</string>
     <string name="action_retry">Reintentar</string>
     <string name="action_back">Atrás</string>
 

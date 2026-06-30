@@ -5,20 +5,22 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * Speaks the ELM327 protocol over an [ObdTransport]. All socket I/O runs on [Dispatchers.IO];
  * every command has a read timeout. Initialisation is run once and guarded so repeated reads
  * don't re-handshake.
+ *
+ * Created per connection by [com.latido.app.data.obd.ObdConnectionManager] with the chosen
+ * transport (Classic, BLE or the replay), so the client itself is transport-agnostic.
  */
-@Singleton
-class Elm327Client @Inject constructor(
+class Elm327Client(
     private val transport: ObdTransport
 ) {
     private val io = Dispatchers.IO
     private var initialized = false
+
+    fun isConnected(): Boolean = transport.isConnected
 
     /** Connect the transport (if needed) and run the AT init sequence once. */
     suspend fun connectAndInit() = withContext(io) {

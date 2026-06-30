@@ -3,6 +3,11 @@ package com.latido.app.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.latido.app.data.dtc.DtcDictionary
+import com.latido.app.data.obd.ConnectionMode
+import com.latido.app.data.obd.ConnectionModeStore
+import com.latido.app.data.obd.ConnectionPhase
+import com.latido.app.data.obd.ObdConnectionManager
+import com.latido.app.data.obd.ObdException
 import com.latido.app.domain.DiagnosisProvider
 import com.latido.app.domain.VehicleRepository
 import com.latido.app.domain.model.Dtc
@@ -20,14 +25,21 @@ import javax.inject.Inject
 class CarViewModel @Inject constructor(
     private val vehicleRepository: VehicleRepository,
     private val diagnosisProvider: DiagnosisProvider,
-    private val dictionary: DtcDictionary
+    private val dictionary: DtcDictionary,
+    private val connectionModeStore: ConnectionModeStore,
+    private val connectionManager: ObdConnectionManager
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(CarUiState(isDemo = vehicleRepository.isDemo))
+    private val _uiState = MutableStateFlow(CarUiState())
     val uiState: StateFlow<CarUiState> = _uiState.asStateFlow()
 
     private val _history = MutableStateFlow<List<HistoryItem>>(emptyList())
     val history: StateFlow<List<HistoryItem>> = _history.asStateFlow()
+
+    val connectionMode: StateFlow<ConnectionMode> = connectionModeStore.mode
+    val connectionPhase: StateFlow<ConnectionPhase> = connectionManager.phase
+
+    fun setConnectionMode(mode: ConnectionMode) = connectionModeStore.set(mode)
 
     /** Read the car (free): populates the basic code list. Does NOT call the AI. */
     fun analyze() {
@@ -51,8 +63,8 @@ class CarViewModel @Inject constructor(
                     }
                     recordHistory(reading.vehicle, stored + pending)
                 }
-                .onFailure {
-                    _uiState.update { it.copy(readState = ReadState.Error) }
+                .onFailure { error ->
+                    _uiState.update { it.copy(readState = ReadState.Error(error.toReason())) }
                 }
         }
     }
@@ -115,4 +127,13 @@ class CarViewModel @Inject constructor(
 
     private fun mockInspection(hasCodes: Boolean): InspectionStatus =
         if (hasCodes) InspectionStatus.WARN else InspectionStatus.PASS
+
+    private fun Throwable.toReason(): ReadErrorReason = when (this) {
+        is ObdException.NoAdapterFound -> ReadErrorReason.NO_ADAPTER
+        is ObdException.BluetoothOff -> ReadErrorReason.BLUETOOTH_OFF
+        is ObdException.PermissionDenied -> ReadErrorReason.PERMISSION
+        is ObdException.ConnectionFailed -> ReadErrorReason.CONNECTION_FAILED
+        is ObdException.ReadTimeout -> ReadErrorReason.TIMEOUT
+        else -> ReadErrorReason.GENERIC
+    }
 }

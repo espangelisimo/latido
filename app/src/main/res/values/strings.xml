@@ -88,8 +88,23 @@
     <string name="history_status_active">Active</string>
     <string name="history_status_cleared">Cleared from car</string>
 
+    <!-- Connection mode -->
+    <string name="home_mode_demo">Demo</string>
+    <string name="home_mode_bluetooth">Bluetooth</string>
+
+    <!-- Connection progress -->
+    <string name="status_scanning">Looking for your adapter…</string>
+    <string name="status_connecting">Connecting…</string>
+    <string name="status_reading">Reading your car…</string>
+
     <!-- Generic / errors -->
     <string name="error_no_connection">You need a connection for the AI diagnosis.</string>
+    <string name="error_no_adapter">No adapter found. Is it plugged in, the ignition on, and the adapter paired in Bluetooth settings?</string>
+    <string name="error_bluetooth_off">Bluetooth is off. Please turn it on and try again.</string>
+    <string name="error_permission">Latido needs Bluetooth permission to talk to your adapter.</string>
+    <string name="error_connection_failed">Couldn\'t connect to the adapter. Try again, or unplug and replug it.</string>
+    <string name="error_timeout">The adapter stopped responding. Make sure the ignition is on and try again.</string>
+    <string name="error_generic">Something went wrong reading your car. Please try again.</string>
     <string name="action_retry">Retry</string>
     <string name="action_back">Back</string>
 

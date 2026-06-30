@@ -1,5 +1,11 @@
 package com.latido.app.ui.screen.home
 
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothManager
+import android.content.Context
+import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,19 +23,26 @@ import androidx.compose.material.icons.filled.BluetoothDisabled
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.latido.app.R
+import com.latido.app.data.bluetooth.BluetoothPermissions
+import com.latido.app.data.obd.ConnectionMode
 import com.latido.app.domain.model.Severity
 import com.latido.app.ui.CarViewModel
 import com.latido.app.ui.ReadState
@@ -43,7 +56,52 @@ fun HomeScreen(
     onAnalyzed: () -> Unit
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val mode by viewModel.connectionMode.collectAsStateWithLifecycle()
     val isLoading = state.readState == ReadState.Loading
+    val context = LocalContext.current
+
+    var localError by remember { mutableStateOf<Int?>(null) }
+
+    val startRead: () -> Unit = {
+        localError = null
+        viewModel.analyze()
+        onAnalyzed()
+    }
+
+    val enableBtLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        if (isBluetoothEnabled(context)) startRead() else localError = R.string.error_bluetooth_off
+    }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { grants ->
+        if (grants.values.all { it }) {
+            if (isBluetoothEnabled(context)) {
+                startRead()
+            } else {
+                enableBtLauncher.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
+            }
+        } else {
+            localError = R.string.error_permission
+        }
+    }
+
+    val onAnalyzeClick: () -> Unit = onClick@{
+        localError = null
+        if (mode == ConnectionMode.DEMO) {
+            startRead()
+            return@onClick
+        }
+        when {
+            !BluetoothPermissions.allGranted(context) ->
+                permissionLauncher.launch(BluetoothPermissions.required())
+            !isBluetoothEnabled(context) ->
+                enableBtLauncher.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
+            else -> startRead()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -58,13 +116,18 @@ fun HomeScreen(
             color = MaterialTheme.colorScheme.onSurface
         )
 
-        ConnectionRow(isDemo = state.isDemo, connected = state.isConnected)
+        ModeToggle(
+            mode = mode,
+            onSelect = {
+                localError = null
+                viewModel.setConnectionMode(it)
+            }
+        )
+
+        ConnectionRow(isDemo = mode == ConnectionMode.DEMO, connected = state.isConnected)
 
         Button(
-            onClick = {
-                viewModel.analyze()
-                onAnalyzed()
-            },
+            onClick = onAnalyzeClick,
             enabled = !isLoading,
             modifier = Modifier
                 .fillMaxWidth()
@@ -86,12 +149,36 @@ fun HomeScreen(
             }
         }
 
+        localError?.let {
+            Text(
+                text = stringResource(it),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.error
+            )
+        }
+
         if (state.readState == ReadState.Loaded) {
             HealthSummaryCard(
                 hasCodes = state.hasCodes,
                 codeCount = state.storedCodes.size + state.pendingCodes.size
             )
         }
+    }
+}
+
+@Composable
+private fun ModeToggle(mode: ConnectionMode, onSelect: (ConnectionMode) -> Unit) {
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        FilterChip(
+            selected = mode == ConnectionMode.DEMO,
+            onClick = { onSelect(ConnectionMode.DEMO) },
+            label = { Text(stringResource(R.string.home_mode_demo)) }
+        )
+        FilterChip(
+            selected = mode == ConnectionMode.BLUETOOTH,
+            onClick = { onSelect(ConnectionMode.BLUETOOTH) },
+            label = { Text(stringResource(R.string.home_mode_bluetooth)) }
+        )
     }
 }
 
@@ -149,4 +236,9 @@ private fun HealthSummaryCard(hasCodes: Boolean, codeCount: Int) {
             )
         }
     }
+}
+
+private fun isBluetoothEnabled(context: Context): Boolean {
+    val manager = context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager
+    return manager?.adapter?.isEnabled == true
 }

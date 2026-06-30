@@ -18,8 +18,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.latido.app.R
+import com.latido.app.data.obd.ConnectionPhase
 import com.latido.app.ui.CarViewModel
 import com.latido.app.ui.DiagnosisUiState
+import com.latido.app.ui.ReadErrorReason
 import com.latido.app.ui.ReadState
 import com.latido.app.ui.components.AnswersCard
 import com.latido.app.ui.components.CodeListCard
@@ -37,6 +39,7 @@ import com.latido.app.ui.components.VerdictLockedCard
 @Composable
 fun DiagnosisScreen(viewModel: CarViewModel) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val phase by viewModel.connectionPhase.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -45,10 +48,10 @@ fun DiagnosisScreen(viewModel: CarViewModel) {
             .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        when (state.readState) {
+        when (val rs = state.readState) {
             ReadState.Idle -> EmptyState()
-            ReadState.Loading -> LoadingState()
-            ReadState.Error -> ErrorState(onRetry = viewModel::analyze)
+            ReadState.Loading -> LoadingState(phase)
+            is ReadState.Error -> ErrorState(rs.reason.messageRes(), onRetry = viewModel::analyze)
             ReadState.Loaded -> {
                 state.vehicle?.let { VehicleHeader(it) }
 
@@ -79,11 +82,20 @@ fun DiagnosisScreen(viewModel: CarViewModel) {
                     }
 
                     is DiagnosisUiState.Error ->
-                        ErrorState(onRetry = viewModel::runDiagnosis)
+                        ErrorState(R.string.error_no_connection, onRetry = viewModel::runDiagnosis)
                 }
             }
         }
     }
+}
+
+private fun ReadErrorReason.messageRes(): Int = when (this) {
+    ReadErrorReason.NO_ADAPTER -> R.string.error_no_adapter
+    ReadErrorReason.BLUETOOTH_OFF -> R.string.error_bluetooth_off
+    ReadErrorReason.PERMISSION -> R.string.error_permission
+    ReadErrorReason.CONNECTION_FAILED -> R.string.error_connection_failed
+    ReadErrorReason.TIMEOUT -> R.string.error_timeout
+    ReadErrorReason.GENERIC -> R.string.error_generic
 }
 
 @Composable
@@ -100,15 +112,27 @@ private fun EmptyState() {
 }
 
 @Composable
-private fun LoadingState() {
-    DiagnosisLoadingSkeleton(Modifier.fillMaxWidth())
+private fun LoadingState(phase: ConnectionPhase) {
+    val statusRes = when (phase) {
+        ConnectionPhase.SCANNING -> R.string.status_scanning
+        ConnectionPhase.CONNECTING -> R.string.status_connecting
+        else -> R.string.status_reading
+    }
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(
+            text = stringResource(statusRes),
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+        DiagnosisLoadingSkeleton(Modifier.fillMaxWidth())
+    }
 }
 
 @Composable
-private fun ErrorState(onRetry: () -> Unit) {
+private fun ErrorState(messageRes: Int, onRetry: () -> Unit) {
     SectionCard(Modifier.fillMaxWidth()) {
         Text(
-            text = stringResource(R.string.error_no_connection),
+            text = stringResource(messageRes),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Start
